@@ -10,6 +10,8 @@ from traitlets import Bool
 from .exchange import Exchange
 from ..utils import check_mode, parse_utc
 
+import gnupg
+
 # pwd is for matching unix names with student ide, so we shouldn't import it on
 # windows machines
 if sys.platform != 'win32':
@@ -83,10 +85,12 @@ class ExchangeCollect(Exchange):
             student_id = rec['username']
             src_path = os.path.join(self.inbound_path, rec['filename'])
 
-            for file in os.listdir(src_path):
-                with open(src_path+'/'+file, 'rb') as f:
-                    status = gpg.decrypt_file(f, output=src_path+'/'+file)
-                    self.log.info(status)
+            if os.path.isdir(os.getenv("HOME")+'/.gnupg'):
+                gpg = gnupg.GPG(gnupghome=os.getenv("HOME")+'/.gnupg')
+                for file in os.listdir(src_path):
+                    with open(src_path+'/'+file, 'rb') as f:
+                        status = gpg.decrypt_file(f, output=src_path+'/'+file)
+                        self.log.info(status)
 
             # Cross check the student id with the owner of the submitted directory
             if self.check_owner and pwd is not None: # check disabled under windows
@@ -132,3 +136,4 @@ class ExchangeCollect(Exchange):
                     self.log.info("Submission already exists, use --update to update: {} {}".format(
                         student_id, self.coursedir.assignment_id
                     ))
+

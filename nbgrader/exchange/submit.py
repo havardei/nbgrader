@@ -154,13 +154,13 @@ class ExchangeSubmit(Exchange):
             dest_path,
             S_IRUSR|S_IWUSR|S_IXUSR|S_IRGRP|S_IWGRP|S_IXGRP|S_IROTH|S_IWOTH|S_IXOTH
         )
-
-        gpg = gnupg.GPG(gnupghome=os.getenv("HOME")+'/.gnupg')
-        for file in os.listdir(dest_path):
-            with open(dest_path+'/'+file, 'rb') as f:
-                if file!='timestamp.txt':
-                    stream = gpg.sign_file(f,output=dest_path+'/'+file)
-                    self.log.info(stream.status)
+        if os.path.isdir(os.getenv("HOME")+'/.gnupg'):
+            gpg = gnupg.GPG(gnupghome=os.getenv("HOME")+'/.gnupg')
+            for file in os.listdir(dest_path):
+                with open(dest_path+'/'+file, 'rb') as f:
+                    if file!='timestamp.txt':
+                        stream = gpg.sign_file(f,output=dest_path+'/'+file)
+                        self.log.info(stream.status)
  
         # also copy to the cache
         if not os.path.isdir(self.cache_path):

@@ -83,6 +83,11 @@ class ExchangeCollect(Exchange):
             student_id = rec['username']
             src_path = os.path.join(self.inbound_path, rec['filename'])
 
+            for file in os.listdir(src_path):
+                with open(src_path+'/'+file, 'rb') as f:
+                    status = gpg.decrypt_file(f, output=src_path+'/'+file)
+                    self.log.info(status)
+
             # Cross check the student id with the owner of the submitted directory
             if self.check_owner and pwd is not None: # check disabled under windows
                 try:

@@ -55,4 +55,3 @@ Please see the [contributing guidelines and documentation](https://nbgrader.read
 
 If you want to develop features for nbgrader, please follow the
 [development installation instructions](https://nbgrader.readthedocs.io/en/latest/contributor_guide/installation_developer.html).
-# nbgrader-exercises
